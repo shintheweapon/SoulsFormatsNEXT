@@ -227,10 +227,30 @@ namespace SoulsFormats
         }
  
         /// <summary>
+        /// Throws an exception if <paramref name="count"/> items of at least <paramref name="bytesEach"/> bytes each
+        /// can't fit between <paramref name="from"/> and the end of the stream, so a damaged count fails before a list
+        /// or array is sized by it; returns the count.
+        /// </summary>
+        internal int AssertCount(int count, int bytesEach, long from)
+        {
+            long available = Length - from;
+            if (count < 0 || (count > 0 && (available < 0 || (long)count * Math.Max(bytesEach, 1) > available)))
+                throw new InvalidDataException($"Count {count} of {bytesEach}-byte items is past the end of the data (0x{Math.Max(available, 0):X} bytes from 0x{from:X}).");
+            return count;
+        }
+
+        /// <summary>
+        /// Throws an exception if <paramref name="count"/> items of at least <paramref name="bytesEach"/> bytes each
+        /// can't fit between the current position and the end of the stream; returns the count.
+        /// </summary>
+        internal int AssertCount(int count, int bytesEach) => AssertCount(count, bytesEach, Position);
+
+        /// <summary>
         /// Reads <paramref name="count"/> values of <typeparamref name="T"/>
         /// </summary>
         private T[] ReadArray<T>(int count) where T : unmanaged
         {
+            AssertCount(count, Unsafe.SizeOf<T>());
             var result = new T[count];
             Span<byte> bytes = MemoryMarshal.AsBytes(result.AsSpan());
             ReadInto(bytes);
@@ -534,6 +554,7 @@ namespace SoulsFormats
         public byte[] ReadBytes(int count)
         {
             ArgumentOutOfRangeException.ThrowIfNegative(count);
+            AssertCount(count, 1);
             byte[] result = GC.AllocateUninitializedArray<byte>(count);
             ReadInto(result);
             return result;

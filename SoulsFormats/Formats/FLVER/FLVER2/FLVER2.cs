@@ -159,37 +159,37 @@ namespace SoulsFormats
             br.AssertInt32(0);
 
             bool isSpeedTree = IsSpeedtree();
-            Dummies = new List<FLVER.Dummy>(dummyCount);
+            Dummies = new List<FLVER.Dummy>(br.AssertCount(dummyCount, 4));
             for (int i = 0; i < dummyCount; i++)
                 Dummies.Add(new FLVER.Dummy(br, Header.Version));
 
-            Materials = new List<Material>(materialCount);
+            Materials = new List<Material>(br.AssertCount(materialCount, 4));
             var gxListIndices = new Dictionary<int, int>();
             GXLists = new List<GXList>();
             for (int i = 0; i < materialCount; i++)
                 Materials.Add(new Material(br, Header, GXLists, gxListIndices));
 
-            Nodes = new List<FLVER.Node>(boneCount);
+            Nodes = new List<FLVER.Node>(br.AssertCount(boneCount, 4));
             for (int i = 0; i < boneCount; i++)
                 Nodes.Add(new FLVER.Node(br, Header.Unicode));
 
-            Meshes = new List<Mesh>(meshCount);
+            Meshes = new List<Mesh>(br.AssertCount(meshCount, 4));
             for (int i = 0; i < meshCount; i++)
                 Meshes.Add(new Mesh(br, Header));
 
-            var faceSets = new List<FaceSet>(faceSetCount);
+            var faceSets = new List<FaceSet>(br.AssertCount(faceSetCount, 4));
             for (int i = 0; i < faceSetCount; i++)
                 faceSets.Add(new FaceSet(br, Header, vertexIndicesSize, dataOffset));
 
-            var vertexBuffers = new List<VertexBuffer>(vertexBufferCount);
+            var vertexBuffers = new List<VertexBuffer>(br.AssertCount(vertexBufferCount, 4));
             for (int i = 0; i < vertexBufferCount; i++)
                 vertexBuffers.Add(new VertexBuffer(br));
 
-            BufferLayouts = new List<BufferLayout>(bufferLayoutCount);
+            BufferLayouts = new List<BufferLayout>(br.AssertCount(bufferLayoutCount, 4));
             for (int i = 0; i < bufferLayoutCount; i++)
                 BufferLayouts.Add(new BufferLayout(br, isSpeedTree));
 
-            var textures = new List<Texture>(textureCount);
+            var textures = new List<Texture>(br.AssertCount(textureCount, 4));
             for (int i = 0; i < textureCount; i++)
                 textures.Add(new Texture(br, Header));
 

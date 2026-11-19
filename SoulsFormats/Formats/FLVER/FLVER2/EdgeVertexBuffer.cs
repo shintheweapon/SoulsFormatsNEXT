@@ -70,7 +70,7 @@ namespace SoulsFormats
                 }
 
                 
-                Vertices = new EdgeGeom.Fixed3[vertexCount];
+                Vertices = new EdgeGeom.Fixed3[br.AssertCount(vertexCount, 1)];
                 for (int i = 0; i < vertexCount; i++)
                 {
                     Vertices[i] = new EdgeGeom.Fixed3(br);

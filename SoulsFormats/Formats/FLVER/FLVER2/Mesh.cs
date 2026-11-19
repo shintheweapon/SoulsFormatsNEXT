@@ -169,6 +169,16 @@ namespace SoulsFormats
                 bool posfilled = layoutMembers.Any(m => m.Semantic == FLVER.LayoutSemantic.Position && m.Type != FLVER.LayoutType.EdgeCompressed);
 
                 int vertexCount = VertexBuffers.Count > 0 ? VertexBuffers[0].VertexCount : 0;
+                // Each uncompressed buffer holds every vertex at its layout's size: a count past the data fails here,
+                // before a vertex is made for each.
+                foreach (VertexBuffer buffer in VertexBuffers)
+                {
+                    if (!buffer.EdgeCompressed)
+                    {
+                        int size = buffer.LayoutIndex >= 0 && buffer.LayoutIndex < layouts.Count ? layouts[buffer.LayoutIndex].Size : 1;
+                        br.AssertCount(vertexCount, size, dataOffset + (long)buffer.BufferOffset);
+                    }
+                }
                 Vertices = new List<FLVER.Vertex>(vertexCount);
                 for (int i = 0; i < vertexCount; i++)
                     Vertices.Add(new FLVER.Vertex(uvCap, tanCap, colorCap));

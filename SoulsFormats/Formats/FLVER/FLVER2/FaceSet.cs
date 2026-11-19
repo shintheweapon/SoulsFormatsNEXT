@@ -138,13 +138,13 @@ namespace SoulsFormats
                 }
                 else if (indexSize == 16)
                 {
-                    Indices = new List<int>(indexCount);
+                    Indices = new List<int>(br.AssertCount(indexCount, 2, dataOffset + indicesOffset));
                     CollectionsMarshal.SetCount(Indices, indexCount);
                     br.GetUInt16s(dataOffset + indicesOffset, CollectionsMarshal.AsSpan(Indices));
                 }
                 else if (indexSize == 32)
                 {
-                    Indices = new List<int>(indexCount);
+                    Indices = new List<int>(br.AssertCount(indexCount, 4, dataOffset + indicesOffset));
                     CollectionsMarshal.SetCount(Indices, indexCount);
                     br.GetValues(dataOffset + indicesOffset, CollectionsMarshal.AsSpan(Indices));
                 }
@@ -181,7 +181,7 @@ namespace SoulsFormats
                     }
                 }
 
-                Indices = new List<int>(indexCount);
+                Indices = new List<int>(Math.Min(indexCount, (int)Math.Min(br.Length, int.MaxValue)));
                 foreach (var group in EdgeIndexGroups)
                 {
                     group.ReadFaceIndices(br, Indices, start);

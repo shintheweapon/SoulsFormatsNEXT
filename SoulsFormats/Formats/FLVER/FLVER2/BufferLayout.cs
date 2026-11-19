@@ -31,7 +31,7 @@ namespace SoulsFormats
                 br.StepIn(memberOffset);
                 {
                     int structOffset = 0;
-                    Capacity = memberCount;
+                    Capacity = br.AssertCount(memberCount, 4);
                     for (int i = 0; i < memberCount; i++)
                     {
                         var member = new FLVER.LayoutMember(br, structOffset, isSpeedTree);

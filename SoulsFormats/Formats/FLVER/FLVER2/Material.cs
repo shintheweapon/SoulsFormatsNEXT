@@ -124,6 +124,9 @@ namespace SoulsFormats
 
             internal void TakeTextures(Dictionary<int, Texture> textureDict)
             {
+                // A material can't take more textures than were read; a damaged count fails before the list is sized.
+                if (textureCount < 0 || textureCount > textureDict.Count)
+                    throw new System.IO.InvalidDataException($"Material texture count {textureCount} is more than the {textureDict.Count} textures left.");
                 Textures = new List<Texture>(textureCount);
                 for (int i = textureIndex; i < textureIndex + textureCount; i++)
                 {
